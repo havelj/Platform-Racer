@@ -90,20 +90,20 @@ function create() {
 
     // Design the level. x = wall, o = coin, ! = lava.
     var level = [
-        'xxxxxxxxxxxxxxxxxxxxxx',
-        'x         !          x',
-        'x                    x',
-        'x         o          x',
-        'x                o   x',
-        'x     o   !          x',
-        'xxxxxxxxxxxxxxxx     x',
-        '               x     x',
-        '               x     x',
-        '               x     x',
-        '               x     x',
-        '               x     x',
-        '               x     x',
-        '               xxxxxxx',
+        'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        'x      !             x       x',
+        'x                    x       x',
+        'x         o          x     o x',
+        'x                o   x       x',
+        'x     o   !          x       x',
+        'xxxxxxxxxxxxxxxx     xx      x',
+        '               x     x       x',
+        '               x     x       x',
+        '               x           !xx',
+        '               x             x',
+        '               x        x    x',
+        '               x             x',
+        '               xxxxxxxxxxxxxxx',
     ];
     createLevel(level, this);
 
@@ -127,15 +127,7 @@ function update() {
     }
     //up
     else if (this.cursor.up.isDown && player.body.touching.down) {
-        player.body.velocity.y = -200;
-    }
-    //up - left
-    else if (this.cursor.up.isDown && this.cursor.left.isDown) {
-        player.body.velocity.y = -200;
-    }
-    //up - right
-    else if (this.cursor.up.isDown && this.cursor.right.isDown) {
-        player.body.velocity.y = -200;
+        player.body.velocity.y = -300;
     }
     //stil
     else {
