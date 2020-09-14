@@ -175,6 +175,12 @@ function createLevel(level, scope) {
             else if (level[i][j] == 'o') {
                 var coin = scope.physics.add.sprite((SPRITES_WIDTH * j) + BUFFER_WIDTH, (SPRITES_HEIGHT * i) + BUFFER_HEIGHT, 'coin');
                 coins.add(coin);
+
+                //coins per level is set to -1 by default. 
+                //Avoids the following issue: 
+                //          New game starts. Player has a coin count of 0. 
+                //          However, before the level loads in, the level load count is also zero (if we don't set it to -1). 
+                //          This would result in the player automatically winning.
                 if (coinsPerLevel != -1) {
                     coinsPerLevel += 1;
                 }
