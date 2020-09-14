@@ -42,10 +42,13 @@ var coins;
 var lavas;
 var coinsPerLevel = -1;
 var myCoinCount = 0;
+var levels;
 
 //Display
 var scoreText;
 var score = 0;
+var level2;
+var currentLevel = 0;
 
 function preload() {
     // This function will be executed at the beginning     
@@ -74,7 +77,7 @@ function create() {
 
     //Camera to follow player movements
     // camera = this.cameras.main;
-    // camera.setDeadzone(700, 0);
+    // camera.setZoom(2);
     // camera.startFollow(player);
 
     // Create 3 groups that will contain our objects
@@ -88,24 +91,38 @@ function create() {
     this.physics.add.overlap(player, coins, collectCoin, null, this);
 
 
-    // Design the level. x = wall, o = coin, ! = lava.
+    //------------------------------------------------------------------------
+    //----------------//
+    //  level Design  //
+    //----------------//
+
+    //x = wall, o = coin, ! = lava.
     var level = [
-        'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-        'x      !             x       x',
-        'x                    x       x',
-        'x         o          x     o x',
-        'x                o   x       x',
-        'x     o   !          x       x',
-        'xxxxxxxxxxxxxxxx     xx      x',
-        '               x     x       x',
-        '               x     x       x',
-        '               x           !xx',
-        '               x             x',
-        '               x        x    x',
-        '               x             x',
-        '               xxxxxxxxxxxxxxx',
+        'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        'x      !             x       x            x',
+        'x                    x       x            x',
+        'x         o          x     o x            x',
+        'x                 o  x                    x',
+        'x     o   !          x                    x',
+        'xxxxxxxxxxxxxxxx  !!!xx                   x',
+        '               x     x       xxxxxxx      x',
+        '               x     x       x     x      x',
+        '               x           !xx     x      x',
+        '               x             x     x      x',
+        '               x        x    x     x      x',
+        '               x             x     xo     x',
+        '               xxxxxxxxxxxxxxx     xxxxxxxx',
     ];
     createLevel(level, this);
+    level2 = [
+        '                                     ',
+        '                                     ',
+        '                                     ',
+        '    !!!!   o  o   !!!                ',
+        'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    ];
+
+    levels = [level, level2];
 
 }
 
@@ -139,13 +156,28 @@ function update() {
     //----------------//
     //    Logic       //
     //----------------//
-    if (coinsPerLevel == myCoinCount) {
+
+    if ((coinsPerLevel == myCoinCount) && (currentLevel < levels.length)) {
+        currentLevel++;
+        coinsPerLevel = -1;
+        myCoinCount = 0;
+        walls.clear(true);
+        coins.clear(true);
+        lavas.clear(true);
+        createLevel(levels[currentLevel], this);
+        player.setX(PLAYER_X);
+        player.setY(PLAYER_Y);
+        // this.scene.restart();
+
+    }
+    else if (coinsPerLevel == myCoinCount && currentLevel == levels.length) {
+        myCoinCount = 0;
+        coinsPerLevel = -1;
+        currentLevel = 0;
+        score = 0;
         this.scene.restart();
         console.log("Game has restarted");
         document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
-        myCoinCount = 0;
-        coinsPerLevel = -1;
-        score = 0;
     }
 
 }
