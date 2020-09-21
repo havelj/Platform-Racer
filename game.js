@@ -1,3 +1,14 @@
+/*
+
+
+Current bugs:
+    -- If player touches 2 diff lava at once, then the retsartGame() function is called twice (thus submitting the score twice)
+                - Submit score elsewhere?
+
+
+*/
+
+
 //----------------//
 //    Constants   //
 //----------------//
@@ -47,7 +58,6 @@ var levels;
 //Display
 var scoreText;
 var score = 0;
-var level2;
 var currentLevel = 0;
 
 function preload() {
@@ -87,7 +97,7 @@ function create() {
 
     //Colliders
     this.physics.add.collider(player, walls);
-    this.physics.add.overlap(player, lavas, restartGame, null, this);
+    this.physics.add.overlap(player, lavas, restartGameByLava, null, this);
     this.physics.add.overlap(player, coins, collectCoin, null, this);
 
 
@@ -114,13 +124,14 @@ function create() {
         '               xxxxxxxxxxxxxxx     xxxxxxxx',
     ];
     createLevel(level, this);
-    level2 = [
+    var level2 = [
         '                                     ',
         '                                     ',
         '                                     ',
         '    !!!!   o  o   !!!                ',
         'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     ];
+
 
     levels = [level, level2];
 
@@ -157,7 +168,11 @@ function update() {
     //    Logic       //
     //----------------//
 
-    if ((coinsPerLevel == myCoinCount) && (currentLevel < levels.length)) {
+    //Iterate to next level (if not final level)
+    if ((coinsPerLevel == myCoinCount) && (currentLevel < levels.length - 1)) {
+        console.log("D");
+        console.log("Current level", currentLevel);
+        console.log("Array length", levels.length);
         currentLevel++;
         coinsPerLevel = -1;
         myCoinCount = 0;
@@ -170,14 +185,16 @@ function update() {
         // this.scene.restart();
 
     }
-    else if (coinsPerLevel == myCoinCount && currentLevel == levels.length) {
+    //If final level, restart scene, submit score, show on screen
+    else if (coinsPerLevel == myCoinCount && currentLevel == levels.length - 1) {
+        console.log("final level done");
+        console.log("Game has restarted");
+        document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
         myCoinCount = 0;
         coinsPerLevel = -1;
         currentLevel = 0;
         score = 0;
         this.scene.restart();
-        console.log("Game has restarted");
-        document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
     }
 
 }
@@ -230,11 +247,14 @@ function collectCoin(player, coin) {
     myCoinCount++;
 }
 
-function restartGame(player, lava) {
+function restartGameByLava(player, lava) {
     this.scene.restart();
     console.log("Game has restarted");
-    document.querySelector("#lastScore").innerHTML += score + ". Player died by lava.<br>";
+    //only submit scores > 0
+    if (score != 0)
+        document.querySelector("#lastScore").innerHTML += score + ". Player died by lava.<br>";
     myCoinCount = 0;
     coinsPerLevel = -1;
     score = 0;
+    currentLevel = 0;
 }
