@@ -30,6 +30,9 @@ var config = {
     width: BOARD_WIDTH,
     height: BOARD_HEIGHT,
     backgroundColor: '#56CBF9',
+    dom: {
+        createContainer: true
+    },
     physics: {
         default: 'arcade',
         arcade: {
@@ -61,6 +64,8 @@ var score = 0;
 var currentLevel = 0;
 
 function preload() {
+    //nameform for high score submission
+    this.load.html('nameform', 'assets/text/nameform.html');
     // This function will be executed at the beginning     
     // That's where we load the images and sounds
     this.load.image('player', 'assets/bird.png');
@@ -196,16 +201,53 @@ function update() {
         // this.scene.restart();
 
     }
+    // //If final level, restart scene, submit score, show on screen
+    // else if (coinsPerLevel == myCoinCount && currentLevel == levels.length - 1) {
+    //     console.log("final level done");
+    //     console.log("Game has restarted");
+    //     document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
+    //     myCoinCount = 0;
+    //     coinsPerLevel = -1;
+    //     currentLevel = 0;
+    //     score = 0;
+    //     this.scene.restart();
+    // }
     //If final level, restart scene, submit score, show on screen
     else if (coinsPerLevel == myCoinCount && currentLevel == levels.length - 1) {
+        this.scene.pause();
+        var text = this.add.text(300, 10, 'Please enter your name', { color: 'white', fontSize: '20px ' });
+
+        var element = this.add.dom(300, 10).createFromCache('nameform');
+
+        element.addListener('click');
+
+        element.on('click', function (event) {
+
+            if (event.target.name === 'playButton') {
+                var inputText = this.getChildByName('nameField');
+
+                //  Have they entered anything?
+                if (inputText.value !== '') {
+                    //  Turn off the click events
+                    this.removeListener('click');
+
+                    //  Hide the login element
+                    this.setVisible(false);
+
+                    //  Send to database
+                    writeNewPost(inputText, score, 75);
+                }
+            }
+        });
+        //writeNewPost("tester", score, 75);
+
         console.log("final level done");
-        console.log("Game has restarted");
         document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
         myCoinCount = 0;
         coinsPerLevel = -1;
         currentLevel = 0;
         score = 0;
-        this.scene.restart();
+        //this.scene.restart();
     }
 
 }
