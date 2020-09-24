@@ -30,9 +30,6 @@ var config = {
     width: BOARD_WIDTH,
     height: BOARD_HEIGHT,
     backgroundColor: '#56CBF9',
-    dom: {
-        createContainer: true
-    },
     physics: {
         default: 'arcade',
         arcade: {
@@ -60,12 +57,13 @@ var levels;
 
 //Display
 var scoreText;
+var timerText;
 var score = 0;
+var scoreToSubmit;
 var currentLevel = 0;
+var myTimer;
 
 function preload() {
-    //nameform for high score submission
-    this.load.html('nameform', 'assets/text/nameform.html');
     // This function will be executed at the beginning     
     // That's where we load the images and sounds
     this.load.image('player', 'assets/bird.png');
@@ -87,8 +85,9 @@ function create() {
     player.setCollideWorldBounds(true);
     player.body.gravity.y = 600;
 
-    //score 
+    //score / time
     scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    timerText = this.add.text(16, 50, 'Time: 0s', { fontSize: '32px', fill: '#000' });
 
     //Camera to follow player movements
     // camera = this.cameras.main;
@@ -154,9 +153,22 @@ function create() {
 
     levels = [level, level2, level3];
 
+    myTimer = this.time.addEvent({
+        delay: 300000,                // ms
+        // args: [],
+        // loop: false,
+        // repeat: 0,
+        // startAt: 0,
+        // timeScale: 1,
+        paused: false
+    });
+    //myTimer.start();
 }
 
 function update() {
+    //Display timer
+    timerText.setText('Time: ' + Math.round((myTimer.getElapsedSeconds() + Number.EPSILON) * 10) / 10 + ' s');
+
     // This function is called 60 times per second    
     // It contains the game's logic   
 
@@ -214,40 +226,14 @@ function update() {
     // }
     //If final level, restart scene, submit score, show on screen
     else if (coinsPerLevel == myCoinCount && currentLevel == levels.length - 1) {
-        this.scene.pause();
-        var text = this.add.text(300, 10, 'Please enter your name', { color: 'white', fontSize: '20px ' });
-
-        var element = this.add.dom(300, 10).createFromCache('nameform');
-
-        element.addListener('click');
-
-        element.on('click', function (event) {
-
-            if (event.target.name === 'playButton') {
-                var inputText = this.getChildByName('nameField');
-
-                //  Have they entered anything?
-                if (inputText.value !== '') {
-                    //  Turn off the click events
-                    this.removeListener('click');
-
-                    //  Hide the login element
-                    this.setVisible(false);
-
-                    //  Send to database
-                    writeNewPost(inputText, score, 75);
-                }
-            }
-        });
-        //writeNewPost("tester", score, 75);
-
+        submitScoreToDatabase(score, Math.round((myTimer.getElapsedSeconds() + Number.EPSILON) * 10) / 10 + ' s.');
         console.log("final level done");
-        document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
+        //document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
         myCoinCount = 0;
         coinsPerLevel = -1;
         currentLevel = 0;
         score = 0;
-        //this.scene.restart();
+        this.scene.restart();
     }
 
 }
@@ -312,4 +298,19 @@ function restartGameByLava(player, lava) {
     player.setX(PLAYER_X);
     player.setY(PLAYER_Y);
     // this.scene.restart();
+}
+
+function submitScoreToDatabase(scoreToSubmit, time) {
+    $("#input-name").toggle();
+    let $submitBtn = document.getElementById("submit-btn");
+    $submitBtn.addEventListener("click", function (evt) {
+        let $nameInput = document.getElementById("name");
+        console.log($nameInput.value);
+        if ($nameInput.value != "") {
+            //submits here
+            writeNewPost($nameInput.value, scoreToSubmit, time);
+            $("#input-name").toggle();
+        }
+
+    });
 }
