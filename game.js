@@ -131,9 +131,23 @@ function create() {
         '    !!!!   o  o   !!!                ',
         'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     ];
+    var level3 = [
+        '                                     ',
+        '                                     ',
+        '                                     ',
+        '                    !!!!   o  o   !!!',
+        'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    ];
+    var level4 = [
+        '                                     ',
+        '   !!                                ',
+        '                                     ',
+        '       !!!!   o  o   !!!             ',
+        'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    ];
 
 
-    levels = [level, level2];
+    levels = [level, level2, level3];
 
 }
 
@@ -170,9 +184,6 @@ function update() {
 
     //Iterate to next level (if not final level)
     if ((coinsPerLevel == myCoinCount) && (currentLevel < levels.length - 1)) {
-        console.log("D");
-        console.log("Current level", currentLevel);
-        console.log("Array length", levels.length);
         currentLevel++;
         coinsPerLevel = -1;
         myCoinCount = 0;
@@ -248,13 +259,15 @@ function collectCoin(player, coin) {
 }
 
 function restartGameByLava(player, lava) {
-    this.scene.restart();
-    console.log("Game has restarted");
-    //only submit scores > 0
-    if (score != 0)
-        document.querySelector("#lastScore").innerHTML += score + ". Player died by lava.<br>";
-    myCoinCount = 0;
+    score -= myCoinCount * 10;
+    scoreText.setText('Score: ' + score);
     coinsPerLevel = -1;
-    score = 0;
-    currentLevel = 0;
+    myCoinCount = 0;
+    walls.clear(true);
+    coins.clear(true);
+    lavas.clear(true);
+    createLevel(levels[currentLevel], this);
+    player.setX(PLAYER_X);
+    player.setY(PLAYER_Y);
+    // this.scene.restart();
 }
