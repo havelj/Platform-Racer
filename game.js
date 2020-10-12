@@ -59,7 +59,6 @@ var levels;
 var scoreText;
 var timerText;
 var score = 0;
-var scoreToSubmit;
 var currentLevel = 0;
 var myTimer;
 
@@ -226,7 +225,7 @@ function update() {
     // }
     //If final level, restart scene, submit score, show on screen
     else if (coinsPerLevel == myCoinCount && currentLevel == levels.length - 1) {
-        submitScoreToDatabase(score, Math.round((myTimer.getElapsedSeconds() + Number.EPSILON) * 10) / 10 + ' s.');
+        submitScoreToDatabase(score, Math.round((myTimer.getElapsedSeconds() + Number.EPSILON) * 10) / 10);
         console.log("final level done");
         //document.querySelector("#lastScore").innerHTML += score + ". Player won!<br>";
         myCoinCount = 0;
@@ -305,7 +304,7 @@ function submitScoreToDatabase(scoreToSubmit, time) {
     let $submitBtn = document.getElementById("submit-btn");
     $submitBtn.addEventListener("click", function (evt) {
         let $nameInput = document.getElementById("name");
-        console.log($nameInput.value);
+
         if ($nameInput.value != "") {
             //submits here
             writeNewPost($nameInput.value, scoreToSubmit, time);

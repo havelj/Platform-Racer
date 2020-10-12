@@ -21,5 +21,13 @@ function writeNewPost(username, score, time) {
         time: time
     };
 
-    return myDatabase.ref("High Scores").push(postData);
+    myDatabase.ref("High Scores").push(postData);
+}
+
+//Fill High Score List
+function fillHighScoreList() {
+    var players = myDatabase.ref("High Scores").orderByChild('time').on("child_added", function (snapshot) {
+        $("#high-scores").append('<li>' + snapshot.val().time + '</li>');
+    });
+
 }
