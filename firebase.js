@@ -27,7 +27,7 @@ function writeNewPost(username, score, time) {
 //Fill High Score List
 function fillHighScoreList() {
     var players = myDatabase.ref("High Scores").orderByChild('time').on("child_added", function (snapshot) {
-        $("#high-scores").append('<li>' + snapshot.val().time + '</li>');
+        $("#high-scores").append('<li>' + snapshot.val().user + ", " + snapshot.val().time + '</li>');
     });
 
 }

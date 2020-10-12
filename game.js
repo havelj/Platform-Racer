@@ -308,7 +308,11 @@ function submitScoreToDatabase(scoreToSubmit, time) {
         if ($nameInput.value != "") {
             //submits here
             writeNewPost($nameInput.value, scoreToSubmit, time);
-            $("#input-name").toggle();
+            $nameInput.value == "";
+            //$("#input-name").toggle();
+            //forces  the website to refresh. this avoids a duplicate pushing error with firebase
+            window.location.reload();
+            return false;
         }
 
     });
